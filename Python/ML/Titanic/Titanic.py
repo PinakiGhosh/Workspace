@@ -32,10 +32,26 @@ def analyseModel(classifier,X_Test,Y_Test,X_Train,Y_Train,runCrossVal=False,cv=1
 
 # Importing the dataset
 dataset = pd.read_csv('train.csv')
+
+#Fill in NA for Age
+
+"""
+dataset['Initial']=dataset.Name.str.extract('([A-Za-z]+)\.')
+dataset['Initial'].replace(['Master','Miss','Mlle','Mme','Ms','Mr','Countess','Mrs','Jonkheer','Don','Dr','Rev','Lady','Major','Sir','Col','Capt'],
+['Age1','Age2','Age2','Age2','Age2','Age3','Age4','Age4','Age5','Age5','Age5','Age5','Age7','Age5','Age5','Age6','Age6'],inplace=True)
+dataset.loc[(dataset.Age.isnull())&(dataset.Initial=='Age1'),'Age']=5
+dataset.loc[(dataset.Age.isnull())&(dataset.Initial=='Age2'),'Age']=22
+dataset.loc[(dataset.Age.isnull())&(dataset.Initial=='Age3'),'Age']=32
+dataset.loc[(dataset.Age.isnull())&(dataset.Initial=='Age4'),'Age']=35
+dataset.loc[(dataset.Age.isnull())&(dataset.Initial=='Age5'),'Age']=43
+dataset.loc[(dataset.Age.isnull())&(dataset.Initial=='Age6'),'Age']=62
+dataset.loc[(dataset.Age.isnull())&(dataset.Initial=='Age7'),'Age']=48
+"""
 del dataset['Name']
 del dataset['Ticket']
 del dataset['Fare']
 del dataset['Cabin']
+del dataset['Initial']
 dataset.fillna("0",inplace=True)
 
 X = dataset.iloc[:, 2:8].values
@@ -103,6 +119,9 @@ classifier = RandomForestClassifier(n_estimators = 10, criterion = 'entropy', ra
 performanceMonitors.append(analyseModel(classifier,X_test,y_test,X_train,y_train,runCrossVal=True,cv=10))
 
 performanceMonitors=sorted(performanceMonitors, key=lambda k: k['MeanAccuracy'],reverse=True)
+
+for i in performanceMonitors:
+    print(i['ClassifierType'],i['Accuracy'])
 
 
 
